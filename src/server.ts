@@ -8,8 +8,6 @@ import { staleMessageCleanup } from "./services/message.service";
 import { getEnvOrThrow } from "./util/env";
 import { HttpsAgent } from "agentkeepalive";
 import { AuthOptions } from "./middleware/jwt";
-import { createRemoteJWKSet } from "jose";
-import { Issuer } from "openid-client";
 
 // use keepalive agent to reuse connections to Fireblocks API
 const keepaliveAgent = new HttpsAgent({
@@ -61,9 +59,9 @@ const admin = new FireblocksSDK(apiSecret, apiKeyNcwAdmin, apiBase, undefined, {
 
 // You must provide either an 'issuerBaseURL', or an 'issuer' and 'jwksUri'
 const issuerBaseURL = process.env.ISSUER_BASE_URL;
-const issuer = process.env.ISSUER;
-const jwksUri = process.env.JWKS_URI;
-const audience = process.env.AUDIENCE;
+// const issuer = process.env.ISSUER;
+// const jwksUri = process.env.JWKS_URI;
+// const audience = process.env.AUDIENCE;
 
 const clients = {
   signer,
@@ -74,10 +72,10 @@ const clients = {
 const origin = getOriginFromEnv();
 
 AppDataSource.initialize()
-  .then(async () => {
+  .then(() => {
     console.log("Data Source has been initialized!");
 
-    const authOptions: AuthOptions = await createAuthOptions();
+    const authOptions: AuthOptions = createAuthOptions();
     const { app, socketIO } = createApp(
       authOptions,
       clients,
@@ -108,25 +106,12 @@ AppDataSource.initialize()
     process.exit(1);
   });
 
-async function createAuthOptions() {
+function createAuthOptions() {
   let authOptions: AuthOptions;
 
   if (issuerBaseURL) {
-    const issuerClient = await Issuer.discover(issuerBaseURL);
     authOptions = {
-      key: createRemoteJWKSet(new URL(issuerClient.metadata.jwks_uri!)),
-      verify: {
-        issuer: issuerClient.metadata.issuer,
-        audience,
-      },
-    };
-  } else if (jwksUri) {
-    authOptions = {
-      key: createRemoteJWKSet(new URL(jwksUri)),
-      verify: {
-        issuer,
-        audience,
-      },
+      authUrl: issuerBaseURL,
     };
   } else {
     throw new Error("Failed to resolve issuer");
