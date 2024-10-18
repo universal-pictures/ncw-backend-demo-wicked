@@ -2,7 +2,7 @@ import morgan from "morgan";
 import cors from "cors";
 import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
-import { AuthOptions, checkJwt } from "./middleware/jwt";
+import { AuthOptions, checkJwt, validateToken } from "./middleware/jwt";
 import { createDeviceRoute } from "./routes/device.route";
 import { createWebhook } from "./routes/webhook.route";
 import { UserController } from "./controllers/user.controller";
@@ -13,7 +13,6 @@ import { createPassphraseRoute } from "./routes/passphrase.route";
 import { createWalletRoute } from "./routes/wallet.route";
 import { Server as SocketIOServer } from "socket.io";
 import { Device } from "./model/device";
-import { jwtVerify } from "jose";
 import { RpcResponse } from "./interfaces/RpcResponse";
 
 const logger = morgan("combined");
@@ -62,14 +61,14 @@ function createApp(
 
   socketIO.on("connection", async (socket) => {
     const token = socket.handshake?.auth?.token;
-    const { verify, key } = authOpts;
+    const { authUrl } = authOpts;
 
     try {
       if (!token) {
         throw new Error("no token provided");
       }
 
-      const payload = await jwtVerify(token, key, verify);
+      const payload = await validateToken(token, authUrl);
       socket.handshake.auth.payload = payload;
     } catch (e) {
       console.error("failed authenticating socket", e);
