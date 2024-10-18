@@ -14,6 +14,7 @@ import { createWalletRoute } from "./routes/wallet.route";
 import { Server as SocketIOServer } from "socket.io";
 import { Device } from "./model/device";
 import { RpcResponse } from "./interfaces/RpcResponse";
+import { createUpdateDatabaseRoute } from "./routes/updateDatabase.route";
 
 const logger = morgan("combined");
 
@@ -33,7 +34,7 @@ function createApp(
   const passphraseRoute = createPassphraseRoute();
   const webhookRoute = createWebhook(clients, webhookPublicKey);
   const userContoller = new UserController(new UserService());
-
+  const updateDatabaseController = createUpdateDatabaseRoute(clients);
   const app: Express = express();
 
   app.use(logger);
@@ -54,6 +55,7 @@ function createApp(
   app.use("/api/devices", validateUser, deviceRoute);
   app.use("/api/wallets", validateUser, walletRoute);
   app.use("/api/webhook", webhookRoute);
+  app.use("/api/updateDatabase", updateDatabaseController)
 
   app.use(errorHandler);
 
