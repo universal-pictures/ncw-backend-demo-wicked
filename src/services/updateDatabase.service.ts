@@ -28,13 +28,13 @@ export class UpdateDatabaseService {
     });
   }
 
-  async assignNewUser(deviceId: string, walletId: string, sub: string) {
+  async assignNewUser(deviceId: string, walletId: string, userId: string) {
     let user: User | null;
 
-    user = await User.findOneBy({ sub });
+    user = await User.findOneBy({ sub: userId });
     if (!user) {
       user = new User();
-      user.sub = sub!;
+      user.sub = userId!;
       await user.save();
     }
 
