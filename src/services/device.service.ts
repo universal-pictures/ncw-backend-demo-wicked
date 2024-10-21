@@ -33,7 +33,7 @@ export class DeviceService {
     const { walletId } = await this.clients.admin.NCW.createWallet();
 
     // note: creating a default first account
-    await this.clients.admin.NCW.createWalletAccount(walletId);
+    const account = await this.clients.admin.NCW.createWalletAccount(walletId);
 
     const wallet = new Wallet();
     wallet.id = walletId;
@@ -45,7 +45,7 @@ export class DeviceService {
 
     await device.save();
 
-    return { walletId };
+    return { walletId, accountId: account.accountId };
   }
 
   async join(deviceId: string, sub: string, walletId: string) {

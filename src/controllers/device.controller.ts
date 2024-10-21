@@ -23,8 +23,8 @@ export class DeviceController {
         throw new Error("Invalid state");
       }
 
-      const { walletId } = await this.service.assign(deviceId, sub!);
-      res.json({ walletId });
+      const { walletId, accountId } = await this.service.assign(deviceId, sub!);
+      res.json({ walletId, accountId });
     } catch (err) {
       next(err);
     }
