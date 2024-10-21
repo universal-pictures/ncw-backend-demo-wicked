@@ -14,7 +14,7 @@ export class UpdateDatabaseController {
       const prevDevice = await this.service.findOne(deviceId);
       if (prevDevice) {
         if (prevDevice.user.sub !== userId && prevDevice.user.sub !== null) { // Existing user id assigned
-          return res.status(401).send();
+          return res.status(401).send(`Error: ${deviceId} previously paired with ${prevDevice.user.sub}`);
         }
       }
 
