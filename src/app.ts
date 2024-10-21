@@ -1,3 +1,4 @@
+import fs from 'fs';
 import morgan from "morgan";
 import cors from "cors";
 import express, { Express, Request, Response } from "express";
@@ -16,7 +17,9 @@ import { Device } from "./model/device";
 import { RpcResponse } from "./interfaces/RpcResponse";
 import { createUpdateDatabaseRoute } from "./routes/updateDatabase.route";
 
-const logger = morgan("combined");
+const logger = morgan("common", {
+  stream: fs.createWriteStream('./system_logs.log', {flags: 'a'})
+});
 
 export const visibilityTimeout = 120_000;
 export const waitForTransactionTimeout = 10_000;
