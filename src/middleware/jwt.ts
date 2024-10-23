@@ -20,7 +20,7 @@ export const checkJwt =
   async (req: Request, res: Response, next: NextFunction) => {
     const token = extractToken(req);
     if (!token || typeof token !== "string") {
-      res.send(401);
+      res.sendStatus(401);
       return;
     }
 
@@ -29,7 +29,7 @@ export const checkJwt =
       req.auth = { token, payload };
       next();
     } catch (e) {
-      res.send(401);
+      res.sendStatus(401);
     }
   };
 
