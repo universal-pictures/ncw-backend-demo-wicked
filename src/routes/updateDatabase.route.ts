@@ -9,6 +9,6 @@ export function createUpdateDatabaseRoute(clients: Clients) {
   const controller = new UpdateDatabaseController(service);
 
   route.post("/:deviceId", controller.assign.bind(controller));
-  route.get("/:deviceId", controller.findAll.bind(controller));
+  route.get("/", controller.findAll.bind(controller));
   return route;
 }
