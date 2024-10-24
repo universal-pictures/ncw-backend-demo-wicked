@@ -25,6 +25,8 @@ const port = process.env.PORT;
 export const DEFAULT_ORIGIN = [
   "http://localhost:5173",
   "https://fireblocks.github.io",
+  "https://127.0.0.1:3000",
+  "*"
 ];
 
 function getOriginFromEnv(): string[] {
